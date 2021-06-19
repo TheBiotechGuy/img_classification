@@ -17,8 +17,11 @@ from django.contrib import admin
 from django.urls import path
 from . import views
 from django.conf.urls.static import static
-from img_classify.settings import MEDIA_URL, MEDIA_ROOT
+from img_classify.settings import MEDIA_URL, MEDIA_ROOT,STATIC_URL,STATIC_ROOT
 urlpatterns = [
-    path('', views.index, name='homepage'),
+    path('', views.home, name='home'),
+    path('model/', views.model, name='model'),
     path('admin/', admin.site.urls),
-] + static(MEDIA_URL, document_root=MEDIA_ROOT)
+    path('about/', views.about, name = 'about'),
+    path('blog/', views.blog, name = 'blog'),
+] + static(MEDIA_URL, document_root=MEDIA_ROOT) + static(STATIC_URL, document_root=STATIC_ROOT)

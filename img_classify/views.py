@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.http import JsonResponse
+from django.http import JsonResponse,HttpResponse
 import base64
 from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
@@ -17,7 +17,7 @@ from numpy import asarray
 import os
 from img_classify.settings import MEDIA_ROOT#, model,train_generator
 
-def index(request):
+def model(request):
     if  request.method == "POST":
         f=request.FILES['sentFile'] # here you get the files needed
         response = {}
@@ -34,17 +34,11 @@ def index(request):
         images = np.vstack([x])
 
         model = load_model('model.h5')
-        # model.compile(loss='binary_crossentropy',
-        #       optimizer='rmsprop',
-        #       metrics=['accuracy'])
         pred = model.predict(x)
         classes = np.array(pred)
         classes = np.where(classes > 0.5, 1, 0)
         label_map = {"cars":0,"planes":1}#(train_generator.class_indices)
         label_map = dict((v,k) for k,v in label_map.items())
-        print("Lable map: ",label_map)
-        print("model.predict(x): ",model.predict(x))
-        print("classes: ",classes)
 
         predictions = [label_map[k] for k in classes[:,0]]
 
@@ -56,6 +50,16 @@ def index(request):
         
     
         response['name'] = f"Predicted class is : {predictions[0]} and the Probability of it being a {predictions[0]} is : {prob}"
-        return render(request,'homepage.html',response)
+        return render(request,'model.html',response)
     else:
-        return render(request,'homepage.html')
+        return render(request,'model.html')
+
+def home(request):
+    return render(request, 'home.html')
+
+def about(request):
+    return HttpResponse("This is my about page")
+
+
+def blog(request):
+    return HttpResponse("Stay Tuned for the blogs. Coming soon!")
